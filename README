@@ -2,12 +2,13 @@ NAME
     Desktop::Detect - Detect desktop environment currently running
 
 VERSION
-    This document describes version 0.01 of Desktop::Detect (from Perl
+    This document describes version 0.02 of Desktop::Detect (from Perl
     distribution Desktop-Detect), released on 2014-11-22.
 
 SYNOPSIS
      use Desktop::Detect qw(detect_desktop);
      my $res = detect_desktop();
+     say "We are running under XFCE" if $res->{desktop} eq 'xfce';
 
 DESCRIPTION
     This module uses several heuristics to find out what desktop environment
@@ -16,8 +17,7 @@ DESCRIPTION
 FUNCTIONS
   detect_desktop() => HASHREF
     Return a hashref containing information about running desktop
-    environment and extra information. Return empty hashref if not detected
-    running under any desktop environment.
+    environment and extra information.
 
     Detection is done from the cheapest methods, e.g. looking at environment
     variables. Several environment variables are checked, e.g.
@@ -27,22 +27,18 @@ FUNCTIONS
 
     *   desktop => STR
 
-        Possible values: xfce, kde-plasma.
+        Possible values: "xfce", "kde-plasma", "gnome", "cinnamon", "lxde",
+        "openbox", or empty string (if can't detect any desktop environment
+        running).
 
 TODO
     *   Window manager information
 
     *   XFCE: version
 
-    *   Detect GNOME
-
     *   Detect MATE
 
     *   Detect Unity
-
-    *   Detect LXDE
-
-    *   Detect Cinnamon
 
     *   Detect JWM
 

@@ -1,7 +1,7 @@
 package Desktop::Detect;
 
 our $DATE = '2014-11-22'; # DATE
-our $VERSION = '0.01'; # VERSION
+our $VERSION = '0.02'; # VERSION
 
 use 5.010001;
 use strict;
@@ -19,30 +19,47 @@ our @EXPORT_OK = qw(detect_desktop); # detect_desktop_cached
 #    $dd_cache;
 #}
 
+sub _det_env {
+    my ($info, $desktop, $env, $re_or_str) = @_;
+    my $cond = ref($re_or_str) eq 'Regexp' ?
+        ($ENV{$env}//'') =~ $re_or_str : ($ENV{$env}//'') eq $re_or_str;
+    if ($cond) {
+        push @{$info->{_debug_info}}, "detect: $desktop via $env env";
+        $info->{desktop} = $desktop;
+        return 1;
+    }
+    0;
+}
+
 sub detect_desktop {
     my @dbg;
     my $info = {_debug_info=>\@dbg};
 
   DETECT:
     {
-        if (($ENV{XDG_MENU_PREFIX}//'') =~ /^xfce-/) {
-            push @dbg, "detect: xfce via XDG_MENU_PREFIX env";
-            $info->{desktop} = 'xfce';
-            last DETECT;
-        }
+        # xfce
+        last DETECT if _det_env($info, 'xfce', 'XDG_MENU_PREFIX', 'xfce-');
+        last DETECT if _det_env($info, 'xfce', 'DESKTOP_SESSION', 'xfce');
 
-        if (($ENV{XDG_DESKTOP_SESSION}//'') =~ /^kde-plasma/) {
-            push @dbg, "detect: kde-plasma via XDG_DESKTOP_SESSION env";
-            $info->{desktop} = 'kde-plasma';
-            last DETECT;
-        }
-        if (($ENV{DESKTOP_SESSION}//'') =~ /^kde-plasma/) {
-            push @dbg, "detect: kde-plasma via DESKTOP_SESSION env";
-            $info->{desktop} = 'kde-plasma';
-            last DETECT;
-        }
+        # kde-plasma
+        last DETECT if _det_env($info, 'kde-plasma', 'XDG_DESKTOP_SESSION', 'kde-plasma');
+        last DETECT if _det_env($info, 'kde-plasma', 'DESKTOP_SESSION', 'kde-plasma');
+
+        # cinnamon
+        last DETECT if _det_env($info, 'cinnamon', 'DESKTOP_SESSION', 'cinnamon');
+
+        # gnome
+        last DETECT if _det_env($info, 'gnome', 'DESKTOP_SESSION', 'gnome');
+
+        # lxde
+        last DETECT if _det_env($info, 'lxde', 'XDG_MENU_PREFIX', 'lxde-');
+        last DETECT if _det_env($info, 'lxde', 'DESKTOP_SESSION', 'LXDE');
+
+        # openbox
+        last DETECT if _det_env($info, 'openbox', 'DESKTOP_SESSION', 'openbox');
 
         push @dbg, "detect: nothing detected";
+        $info->{desktop} = '';
     } # DETECT
 
     $info;
@@ -63,12 +80,13 @@ Desktop::Detect - Detect desktop environment currently running
 
 =head1 VERSION
 
-This document describes version 0.01 of Desktop::Detect (from Perl distribution Desktop-Detect), released on 2014-11-22.
+This document describes version 0.02 of Desktop::Detect (from Perl distribution Desktop-Detect), released on 2014-11-22.
 
 =head1 SYNOPSIS
 
  use Desktop::Detect qw(detect_desktop);
  my $res = detect_desktop();
+ say "We are running under XFCE" if $res->{desktop} eq 'xfce';
 
 =head1 DESCRIPTION
 
@@ -80,8 +98,7 @@ is currently running, along with extra information.
 =head2 detect_desktop() => HASHREF
 
 Return a hashref containing information about running desktop environment and
-extra information. Return empty hashref if not detected running under any
-desktop environment.
+extra information.
 
 Detection is done from the cheapest methods, e.g. looking at environment
 variables. Several environment variables are checked, e.g. C<DESKTOP_SESSION>,
@@ -93,7 +110,8 @@ Result:
 
 =item * desktop => STR
 
-Possible values: xfce, kde-plasma.
+Possible values: C<xfce>, C<kde-plasma>, C<gnome>, C<cinnamon>, C<lxde>,
+C<openbox>, or empty string (if can't detect any desktop environment running).
 
 =back
 
@@ -105,15 +123,9 @@ Possible values: xfce, kde-plasma.
 
 =item * XFCE: version
 
-=item * Detect GNOME
-
 =item * Detect MATE
 
 =item * Detect Unity
-
-=item * Detect LXDE
-
-=item * Detect Cinnamon
 
 =item * Detect JWM
 
