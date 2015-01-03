@@ -1,7 +1,7 @@
 package Desktop::Detect;
 
-our $DATE = '2014-11-22'; # DATE
-our $VERSION = '0.02'; # VERSION
+our $DATE = '2015-01-03'; # DATE
+our $VERSION = '0.03'; # VERSION
 
 use 5.010001;
 use strict;
@@ -66,7 +66,7 @@ sub detect_desktop {
 }
 
 1;
-#ABSTRACT: Detect desktop environment currently running
+# ABSTRACT: Detect desktop environment currently running
 
 __END__
 
@@ -80,7 +80,7 @@ Desktop::Detect - Detect desktop environment currently running
 
 =head1 VERSION
 
-This document describes version 0.02 of Desktop::Detect (from Perl distribution Desktop-Detect), released on 2014-11-22.
+This document describes version 0.03 of Desktop::Detect (from Perl distribution Desktop-Detect), released on 2015-01-03.
 
 =head1 SYNOPSIS
 
@@ -115,24 +115,6 @@ C<openbox>, or empty string (if can't detect any desktop environment running).
 
 =back
 
-=head1 TODO
-
-=over
-
-=item * Window manager information
-
-=item * XFCE: version
-
-=item * Detect MATE
-
-=item * Detect Unity
-
-=item * Detect JWM
-
-=item * Detect Windows?
-
-=back
-
 =head1 SEE ALSO
 
 =head1 HOMEPAGE
@@ -157,7 +139,7 @@ perlancar <perlancar@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by perlancar@cpan.org.
+This software is copyright (c) 2015 by perlancar@cpan.org.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
